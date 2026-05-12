@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Escape Room - Literacy & Math</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🎮 Wordle Escape Room</h1>
+            <p class="subtitle">Literacy & Math Challenge</p>
+        </header>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="label">Score:</span>
+                <span class="value" id="score">0</span>
+            </div>
+            <div class="stat">
+                <span class="label">Streak:</span>
+                <span class="value" id="streak">0</span>
+            </div>
+            <div class="stat">
+                <span class="label">Wins:</span>
+                <span class="value" id="wins">0</span>
+            </div>
+        </div>
+
+        <!-- Difficulty Selector -->
+        <div class="difficulty-selector">
+            <label for="difficulty">Difficulty Level:</label>
+            <select id="difficulty" onchange="changeDifficulty()">
+                <option value="easy">Easy (4 letters, 8 guesses)</option>
+                <option value="medium" selected>Medium (5 letters, 6 guesses)</option>
+                <option value="hard">Hard (6 letters, 5 guesses)</option>
+            </select>
+            <button id="newGameBtn" onclick="startNewGame()" class="btn-new-game">New Game</button>
+        </div>
+
+        <!-- Challenge Type Display -->
+        <div class="challenge-info">
+            <p id="challengeType"></p>
+        </div>
+
+        <!-- Game Board -->
+        <div class="game-board">
+            <div id="guessesContainer" class="guesses-container"></div>
+        </div>
+
+        <!-- Hint Button & Attempts -->
+        <div class="game-controls">
+            <button id="hintBtn" onclick="showHint()" class="btn-hint">💡 Hint (1 per game)</button>
+            <div class="attempts-info">
+                <p>Attempts: <span id="attempts">0</span> / <span id="maxAttempts">6</span></p>
+            </div>
+        </div>
+
+        <!-- Hint Display -->
+        <div id="hintDisplay" class="hint-display" style="display: none;">
+            <p id="hintText"></p>
+        </div>
+
+        <!-- Keyboard -->
+        <div class="keyboard">
+            <div class="keyboard-row">
+                <button class="key" onclick="guessLetter('Q')">Q</button>
+                <button class="key" onclick="guessLetter('W')">W</button>
+                <button class="key" onclick="guessLetter('E')">E</button>
+                <button class="key" onclick="guessLetter('R')">R</button>
+                <button class="key" onclick="guessLetter('T')">T</button>
+                <button class="key" onclick="guessLetter('Y')">Y</button>
+                <button class="key" onclick="guessLetter('U')">U</button>
+                <button class="key" onclick="guessLetter('I')">I</button>
+                <button class="key" onclick="guessLetter('O')">O</button>
+                <button class="key" onclick="guessLetter('P')">P</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="key" onclick="guessLetter('A')">A</button>
+                <button class="key" onclick="guessLetter('S')">S</button>
+                <button class="key" onclick="guessLetter('D')">D</button>
+                <button class="key" onclick="guessLetter('F')">F</button>
+                <button class="key" onclick="guessLetter('G')">G</button>
+                <button class="key" onclick="guessLetter('H')">H</button>
+                <button class="key" onclick="guessLetter('J')">J</button>
+                <button class="key" onclick="guessLetter('K')">K</button>
+                <button class="key" onclick="guessLetter('L')">L</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="key delete-key" onclick="deleteLetter()">DELETE</button>
+                <button class="key" onclick="guessLetter('Z')">Z</button>
+                <button class="key" onclick="guessLetter('X')">X</button>
+                <button class="key" onclick="guessLetter('C')">C</button>
+                <button class="key" onclick="guessLetter('V')">V</button>
+                <button class="key" onclick="guessLetter('B')">B</button>
+                <button class="key" onclick="guessLetter('N')">N</button>
+                <button class="key" onclick="guessLetter('M')">M</button>
+                <button class="key enter-key" onclick="submitGuess()">ENTER</button>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>📖 How to Play:</h3>
+            <ul>
+                <li>🎯 Guess the word or solve the math problem</li>
+                <li>🟩 Green = correct letter in correct position</li>
+                <li>🟨 Yellow = correct letter in wrong position</li>
+                <li>⬜ Gray = letter not in word</li>
+                <li>💡 Use your hint wisely!</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameOverModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2 id="gameOverTitle"></h2>
+            <p id="gameOverMessage"></p>
+            <p class="final-score">Score: <strong id="finalScore">0</strong></p>
+            <button onclick="startNewGame()" class="btn-modal">Play Again</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
