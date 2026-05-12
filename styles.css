@@ -1,0 +1,451 @@
+/* ==================== GENERAL STYLES ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    width: 100%;
+    padding: 30px;
+}
+
+/* ==================== HEADER ==================== */
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+    border-bottom: 3px solid #667eea;
+    padding-bottom: 15px;
+}
+
+.header h1 {
+    font-size: 2.5em;
+    color: #667eea;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    font-size: 1.1em;
+    color: #764ba2;
+    font-weight: 500;
+}
+
+/* ==================== STATS BAR ==================== */
+.stats-bar {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 25px;
+    background: #f0f0f0;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat .label {
+    display: block;
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.stat .value {
+    display: block;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #667eea;
+}
+
+/* ==================== DIFFICULTY SELECTOR ==================== */
+.difficulty-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.difficulty-selector label {
+    font-weight: 600;
+    color: #333;
+}
+
+.difficulty-selector select {
+    flex: 1;
+    padding: 10px 15px;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    background: white;
+    color: #333;
+    min-width: 200px;
+}
+
+.difficulty-selector select:focus {
+    outline: none;
+    border-color: #764ba2;
+}
+
+.btn-new-game {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.btn-new-game:hover {
+    transform: scale(1.05);
+}
+
+/* ==================== CHALLENGE INFO ==================== */
+.challenge-info {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #e8f4f8;
+    border-left: 4px solid #667eea;
+    border-radius: 5px;
+}
+
+.challenge-info p {
+    font-size: 1.1em;
+    color: #333;
+    margin: 0;
+}
+
+/* ==================== GAME BOARD ==================== */
+.game-board {
+    margin: 25px 0;
+}
+
+.guesses-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.guess-row {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.letter-box {
+    width: 50px;
+    height: 50px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    background: white;
+    color: #333;
+}
+
+.letter-box.active {
+    border-color: #667eea;
+}
+
+.letter-box.correct {
+    background: #6aaa64;
+    color: white;
+    border-color: #6aaa64;
+    transform: scale(1.05);
+}
+
+.letter-box.present {
+    background: #c9b458;
+    color: white;
+    border-color: #c9b458;
+    transform: scale(1.05);
+}
+
+.letter-box.absent {
+    background: #787c7e;
+    color: white;
+    border-color: #787c7e;
+    opacity: 0.7;
+}
+
+/* ==================== GAME CONTROLS ==================== */
+.game-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.btn-hint {
+    padding: 10px 20px;
+    background: #ffc107;
+    color: #333;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-hint:hover:not(:disabled) {
+    background: #ffb300;
+    transform: scale(1.05);
+}
+
+.btn-hint:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.attempts-info {
+    font-weight: 600;
+    color: #666;
+    text-align: center;
+}
+
+/* ==================== HINT DISPLAY ==================== */
+.hint-display {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 12px 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.hint-display p {
+    margin: 0;
+    color: #856404;
+    font-weight: 500;
+}
+
+/* ==================== KEYBOARD ==================== */
+.keyboard {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.keyboard-row {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.key {
+    padding: 10px 8px;
+    background: #e0e0e0;
+    border: none;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9em;
+    min-width: 32px;
+    text-align: center;
+}
+
+.key:hover {
+    background: #d0d0d0;
+    transform: scale(1.05);
+}
+
+.key:active {
+    transform: scale(0.95);
+}
+
+.key.correct {
+    background: #6aaa64;
+    color: white;
+}
+
+.key.present {
+    background: #c9b458;
+    color: white;
+}
+
+.key.absent {
+    background: #787c7e;
+    color: white;
+    opacity: 0.6;
+}
+
+.delete-key {
+    flex: 1;
+    max-width: 60px;
+}
+
+.enter-key {
+    flex: 1;
+    max-width: 60px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.enter-key:hover {
+    background: linear-gradient(135deg, #764ba2, #667eea);
+}
+
+/* ==================== INSTRUCTIONS ==================== */
+.instructions {
+    background: #f0f0f0;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 25px;
+    border-left: 4px solid #667eea;
+}
+
+.instructions h3 {
+    color: #667eea;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.instructions ul {
+    list-style: none;
+    padding: 0;
+}
+
+.instructions li {
+    color: #555;
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.instructions li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #667eea;
+    font-weight: bold;
+}
+
+/* ==================== MODAL ==================== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+}
+
+.modal-content h2 {
+    font-size: 2em;
+    margin-bottom: 15px;
+    color: #667eea;
+}
+
+.modal-content p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.final-score {
+    font-size: 1.3em;
+    color: #764ba2;
+    margin: 20px 0 !important;
+    font-weight: bold;
+}
+
+.btn-modal {
+    padding: 15px 40px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+    margin-top: 20px;
+}
+
+.btn-modal:hover {
+    transform: scale(1.05);
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+
+    .header h1 {
+        font-size: 1.8em;
+    }
+
+    .letter-box {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2em;
+    }
+
+    .key {
+        padding: 8px 5px;
+        font-size: 0.8em;
+        min-width: 28px;
+    }
+
+    .difficulty-selector {
+        flex-direction: column;
+    }
+
+    .difficulty-selector select {
+        min-width: 100%;
+    }
+
+    .game-controls {
+        flex-direction: column;
+    }
+
+    .stats-bar {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
