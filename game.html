@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Escape Room - Literacy & Math</title>
+    <style>
+/* ==================== GENERAL STYLES ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    width: 100%;
+    padding: 30px;
+}
+
+/* ==================== HEADER ==================== */
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+    border-bottom: 3px solid #667eea;
+    padding-bottom: 15px;
+}
+
+.header h1 {
+    font-size: 2.5em;
+    color: #667eea;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    font-size: 1.1em;
+    color: #764ba2;
+    font-weight: 500;
+}
+
+/* ==================== STATS BAR ==================== */
+.stats-bar {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 25px;
+    background: #f0f0f0;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat .label {
+    display: block;
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.stat .value {
+    display: block;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #667eea;
+}
+
+/* ==================== DIFFICULTY SELECTOR ==================== */
+.difficulty-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.difficulty-selector label {
+    font-weight: 600;
+    color: #333;
+}
+
+.difficulty-selector select {
+    flex: 1;
+    padding: 10px 15px;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    background: white;
+    color: #333;
+    min-width: 200px;
+}
+
+.difficulty-selector select:focus {
+    outline: none;
+    border-color: #764ba2;
+}
+
+.btn-new-game {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.btn-new-game:hover {
+    transform: scale(1.05);
+}
+
+/* ==================== CHALLENGE INFO ==================== */
+.challenge-info {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #e8f4f8;
+    border-left: 4px solid #667eea;
+    border-radius: 5px;
+}
+
+.challenge-info p {
+    font-size: 1.1em;
+    color: #333;
+    margin: 0;
+}
+
+/* ==================== GAME BOARD ==================== */
+.game-board {
+    margin: 25px 0;
+}
+
+.guesses-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.guess-row {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.letter-box {
+    width: 50px;
+    height: 50px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    background: white;
+    color: #333;
+}
+
+.letter-box.active {
+    border-color: #667eea;
+}
+
+.letter-box.correct {
+    background: #6aaa64;
+    color: white;
+    border-color: #6aaa64;
+    transform: scale(1.05);
+}
+
+.letter-box.present {
+    background: #c9b458;
+    color: white;
+    border-color: #c9b458;
+    transform: scale(1.05);
+}
+
+.letter-box.absent {
+    background: #787c7e;
+    color: white;
+    border-color: #787c7e;
+    opacity: 0.7;
+}
+
+/* ==================== GAME CONTROLS ==================== */
+.game-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.btn-hint {
+    padding: 10px 20px;
+    background: #ffc107;
+    color: #333;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-hint:hover:not(:disabled) {
+    background: #ffb300;
+    transform: scale(1.05);
+}
+
+.btn-hint:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.attempts-info {
+    font-weight: 600;
+    color: #666;
+    text-align: center;
+}
+
+/* ==================== HINT DISPLAY ==================== */
+.hint-display {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 12px 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.hint-display p {
+    margin: 0;
+    color: #856404;
+    font-weight: 500;
+}
+
+/* ==================== KEYBOARD ==================== */
+.keyboard {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.keyboard-row {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.key {
+    padding: 10px 8px;
+    background: #e0e0e0;
+    border: none;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9em;
+    min-width: 32px;
+    text-align: center;
+}
+
+.key:hover {
+    background: #d0d0d0;
+    transform: scale(1.05);
+}
+
+.key:active {
+    transform: scale(0.95);
+}
+
+.key.correct {
+    background: #6aaa64;
+    color: white;
+}
+
+.key.present {
+    background: #c9b458;
+    color: white;
+}
+
+.key.absent {
+    background: #787c7e;
+    color: white;
+    opacity: 0.6;
+}
+
+.delete-key {
+    flex: 1;
+    max-width: 60px;
+}
+
+.enter-key {
+    flex: 1;
+    max-width: 60px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.enter-key:hover {
+    background: linear-gradient(135deg, #764ba2, #667eea);
+}
+
+/* ==================== INSTRUCTIONS ==================== */
+.instructions {
+    background: #f0f0f0;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 25px;
+    border-left: 4px solid #667eea;
+}
+
+.instructions h3 {
+    color: #667eea;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.instructions ul {
+    list-style: none;
+    padding: 0;
+}
+
+.instructions li {
+    color: #555;
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.instructions li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #667eea;
+    font-weight: bold;
+}
+
+/* ==================== MODAL ==================== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+}
+
+.modal-content h2 {
+    font-size: 2em;
+    margin-bottom: 15px;
+    color: #667eea;
+}
+
+.modal-content p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.final-score {
+    font-size: 1.3em;
+    color: #764ba2;
+    margin: 20px 0 !important;
+    font-weight: bold;
+}
+
+.btn-modal {
+    padding: 15px 40px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+    margin-top: 20px;
+}
+
+.btn-modal:hover {
+    transform: scale(1.05);
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+
+    .header h1 {
+        font-size: 1.8em;
+    }
+
+    .letter-box {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2em;
+    }
+
+    .key {
+        padding: 8px 5px;
+        font-size: 0.8em;
+        min-width: 28px;
+    }
+
+    .difficulty-selector {
+        flex-direction: column;
+    }
+
+    .difficulty-selector select {
+        min-width: 100%;
+    }
+
+    .game-controls {
+        flex-direction: column;
+    }
+
+    .stats-bar {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🎮 Wordle Escape Room</h1>
+            <p class="subtitle">Literacy & Math Challenge</p>
+        </header>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="label">Score:</span>
+                <span class="value" id="score">0</span>
+            </div>
+            <div class="stat">
+                <span class="label">Streak:</span>
+                <span class="value" id="streak">0</span>
+            </div>
+            <div class="stat">
+                <span class="label">Wins:</span>
+                <span class="value" id="wins">0</span>
+            </div>
+        </div>
+
+        <!-- Difficulty Selector -->
+        <div class="difficulty-selector">
+            <label for="difficulty">Difficulty Level:</label>
+            <select id="difficulty" onchange="changeDifficulty()">
+                <option value="easy">Easy (4 letters, 8 guesses)</option>
+                <option value="medium" selected>Medium (5 letters, 6 guesses)</option>
+                <option value="hard">Hard (6 letters, 5 guesses)</option>
+            </select>
+            <button id="newGameBtn" onclick="startNewGame()" class="btn-new-game">New Game</button>
+        </div>
+
+        <!-- Challenge Type Display -->
+        <div class="challenge-info">
+            <p id="challengeType"></p>
+        </div>
+
+        <!-- Game Board -->
+        <div class="game-board">
+            <div id="guessesContainer" class="guesses-container"></div>
+        </div>
+
+        <!-- Hint Button & Attempts -->
+        <div class="game-controls">
+            <button id="hintBtn" onclick="showHint()" class="btn-hint">💡 Hint (1 per game)</button>
+            <div class="attempts-info">
+                <p>Attempts: <span id="attempts">0</span> / <span id="maxAttempts">6</span></p>
+            </div>
+        </div>
+
+        <!-- Hint Display -->
+        <div id="hintDisplay" class="hint-display" style="display: none;">
+            <p id="hintText"></p>
+        </div>
+
+        <!-- Keyboard -->
+        <div class="keyboard">
+            <div class="keyboard-row">
+                <button class="key" onclick="guessLetter('Q')">Q</button>
+                <button class="key" onclick="guessLetter('W')">W</button>
+                <button class="key" onclick="guessLetter('E')">E</button>
+                <button class="key" onclick="guessLetter('R')">R</button>
+                <button class="key" onclick="guessLetter('T')">T</button>
+                <button class="key" onclick="guessLetter('Y')">Y</button>
+                <button class="key" onclick="guessLetter('U')">U</button>
+                <button class="key" onclick="guessLetter('I')">I</button>
+                <button class="key" onclick="guessLetter('O')">O</button>
+                <button class="key" onclick="guessLetter('P')">P</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="key" onclick="guessLetter('A')">A</button>
+                <button class="key" onclick="guessLetter('S')">S</button>
+                <button class="key" onclick="guessLetter('D')">D</button>
+                <button class="key" onclick="guessLetter('F')">F</button>
+                <button class="key" onclick="guessLetter('G')">G</button>
+                <button class="key" onclick="guessLetter('H')">H</button>
+                <button class="key" onclick="guessLetter('J')">J</button>
+                <button class="key" onclick="guessLetter('K')">K</button>
+                <button class="key" onclick="guessLetter('L')">L</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="key delete-key" onclick="deleteLetter()">DELETE</button>
+                <button class="key" onclick="guessLetter('Z')">Z</button>
+                <button class="key" onclick="guessLetter('X')">X</button>
+                <button class="key" onclick="guessLetter('C')">C</button>
+                <button class="key" onclick="guessLetter('V')">V</button>
+                <button class="key" onclick="guessLetter('B')">B</button>
+                <button class="key" onclick="guessLetter('N')">N</button>
+                <button class="key" onclick="guessLetter('M')">M</button>
+                <button class="key enter-key" onclick="submitGuess()">ENTER</button>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>📖 How to Play:</h3>
+            <ul>
+                <li>🎯 Guess the word or solve the math problem</li>
+                <li>🟩 Green = correct letter in correct position</li>
+                <li>🟨 Yellow = correct letter in wrong position</li>
+                <li>⬜ Gray = letter not in word</li>
+                <li>💡 Use your hint wisely!</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameOverModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2 id="gameOverTitle"></h2>
+            <p id="gameOverMessage"></p>
+            <p class="final-score">Score: <strong id="finalScore">0</strong></p>
+            <button onclick="startNewGame()" class="btn-modal">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+/* ==================== GAME DATA ==================== */
+const gameData = {
+    easy: {
+        words: [
+            { word: 'BOOK', type: 'Literacy', challenge: 'A bound set of pages with a story' },
+            { word: 'MATH', type: 'Math', challenge: 'Solve: 2 + 2 = 4. Spell the word for this subject' },
+            { word: 'READ', type: 'Literacy', challenge: 'To look at words and understand them' },
+            { word: 'PLAN', type: 'Math', challenge: 'Solve: 5 + 5 = 10. This is a 4-letter ___' },
+            { word: 'POEM', type: 'Literacy', challenge: 'A piece of creative writing with rhymes' },
+            { word: 'QUIZ', type: 'Math', challenge: 'Solve: 3 × 3 = 9. A short test or ___ question' },
+            { word: 'IDEA', type: 'Literacy', challenge: 'A thought or suggestion' },
+            { word: 'AREA', type: 'Math', challenge: 'Solve: 4 × 3 = 12. The space inside a shape is called ___' }
+        ],
+        maxAttempts: 8
+    },
+    medium: {
+        words: [
+            { word: 'STORY', type: 'Literacy', challenge: 'A narrative tale or account of events' },
+            { word: 'GRAPH', type: 'Math', challenge: 'Solve: 10 - 3 = 7. A visual display of data on a ___' },
+            { word: 'NOVEL', type: 'Literacy', challenge: 'A long fictional narrative book' },
+            { word: 'SHAPE', type: 'Math', challenge: 'Solve: 6 + 4 = 10. A circle or square is a geometric ___' },
+            { word: 'THEME', type: 'Literacy', challenge: 'The main idea or subject of a story' },
+            { word: 'LOGIC', type: 'Math', challenge: 'Solve: 8 ÷ 2 = 4. Mathematical ___ and reasoning' },
+            { word: 'WRITE', type: 'Literacy', challenge: 'To compose words on paper or screen' },
+            { word: 'ANGLE', type: 'Math', challenge: 'Solve: 45 + 45 = 90. A 90-degree ___ is a right angle' },
+            { word: 'FABLE', type: 'Literacy', challenge: 'A short story with a moral lesson' },
+            { word: 'EQUAL', type: 'Math', challenge: 'Solve: 7 = 7. Two things that are the same are ___' }
+        ],
+        maxAttempts: 6
+    },
+    hard: {
+        words: [
+            { word: 'AUTHOR', type: 'Literacy', challenge: 'A person who writes books or stories' },
+            { word: 'VOLUME', type: 'Math', challenge: 'Solve: 5 × 4 × 3 = 60. The amount of space in a 3D shape' },
+            { word: 'POETRY', type: 'Literacy', challenge: 'Creative writing using rhythm and emotion' },
+            { word: 'METRIC', type: 'Math', challenge: 'Solve: 1000mm = 1m. The ___ system measures in powers of 10' },
+            { word: 'SYMBOL', type: 'Literacy', challenge: 'A sign or image that represents something else' },
+            { word: 'PRIMES', type: 'Math', challenge: 'Solve: 2,3,5,7. Numbers divisible only by 1 and themselves' },
+            { word: 'PHRASE', type: 'Literacy', challenge: 'A group of words that express an idea' },
+            { word: 'MATRIX', type: 'Math', challenge: 'Solve: 2×2 with 4 elements. A rectangular array of numbers' },
+            { word: 'THESIS', type: 'Literacy', challenge: 'The main argument or claim in an essay' },
+            { word: 'DECIMAL', type: 'Math', challenge: 'A number like 3.14 is called a ___ number' }
+        ],
+        maxAttempts: 5
+    }
+};
+
+/* ==================== GAME STATE ==================== */
+let gameState = {
+    difficulty: 'medium',
+    currentWord: {},
+    guesses: [],
+    currentGuess: '',
+    gameOver: false,
+    won: false,
+    hintUsed: false,
+    score: 0,
+    streak: 0,
+    wins: 0,
+    keyStates: {}
+};
+
+/* ==================== INITIALIZATION ==================== */
+document.addEventListener('DOMContentLoaded', () => {
+    loadStats();
+    startNewGame();
+    addKeyboardSupport();
+});
+
+function startNewGame() {
+    const difficulty = document.getElementById('difficulty').value;
+    gameState.difficulty = difficulty;
+    gameState.currentWord = getRandomWord(difficulty);
+    gameState.guesses = [];
+    gameState.currentGuess = '';
+    gameState.gameOver = false;
+    gameState.won = false;
+    gameState.hintUsed = false;
+    gameState.keyStates = {};
+    
+    document.getElementById('hintBtn').disabled = false;
+    document.getElementById('hintDisplay').style.display = 'none';
+    document.getElementById('gameOverModal').style.display = 'none';
+    
+    updateDisplay();
+    renderGameBoard();
+}
+
+function getRandomWord(difficulty) {
+    const words = gameData[difficulty].words;
+    return words[Math.floor(Math.random() * words.length)];
+}
+
+function changeDifficulty() {
+    startNewGame();
+}
+
+/* ==================== DISPLAY UPDATES ==================== */
+function updateDisplay() {
+    const maxAttempts = gameData[gameState.difficulty].maxAttempts;
+    const remainingAttempts = maxAttempts - gameState.guesses.length;
+    
+    document.getElementById('challengeType').textContent = 
+        `🎯 ${gameState.currentWord.type} Challenge: ${gameState.currentWord.challenge}`;
+    document.getElementById('attempts').textContent = gameState.guesses.length;
+    document.getElementById('maxAttempts').textContent = maxAttempts;
+    document.getElementById('score').textContent = gameState.score;
+    document.getElementById('streak').textContent = gameState.streak;
+    document.getElementById('wins').textContent = gameState.wins;
+}
+
+function renderGameBoard() {
+    const maxAttempts = gameData[gameState.difficulty].maxAttempts;
+    const wordLength = gameState.currentWord.word.length;
+    const container = document.getElementById('guessesContainer');
+    container.innerHTML = '';
+
+    for (let i = 0; i < maxAttempts; i++) {
+        const row = document.createElement('div');
+        row.className = 'guess-row';
+        
+        for (let j = 0; j < wordLength; j++) {
+            const box = document.createElement('div');
+            box.className = 'letter-box';
+            
+            if (i < gameState.guesses.length) {
+                const letter = gameState.guesses[i][j];
+                box.textContent = letter;
+                
+                if (letter === gameState.currentWord.word[j]) {
+                    box.classList.add('correct');
+                } else if (gameState.currentWord.word.includes(letter)) {
+                    box.classList.add('present');
+                } else {
+                    box.classList.add('absent');
+                }
+            } else if (i === gameState.guesses.length) {
+                if (j < gameState.currentGuess.length) {
+                    box.textContent = gameState.currentGuess[j];
+                }
+                box.classList.add('active');
+            }
+            
+            row.appendChild(box);
+        }
+        container.appendChild(row);
+    }
+    updateDisplay();
+}
+
+/* ==================== GAME INPUT ==================== */
+function guessLetter(letter) {
+    if (gameState.gameOver || gameState.currentGuess.length >= gameState.currentWord.word.length) {
+        return;
+    }
+    
+    gameState.currentGuess += letter;
+    renderGameBoard();
+}
+
+function deleteLetter() {
+    if (gameState.gameOver) return;
+    gameState.currentGuess = gameState.currentGuess.slice(0, -1);
+    renderGameBoard();
+}
+
+function submitGuess() {
+    if (gameState.gameOver) {
+        startNewGame();
+        return;
+    }
+
+    const wordLength = gameState.currentWord.word.length;
+    
+    if (gameState.currentGuess.length !== wordLength) {
+        alert(`Please enter a ${wordLength}-letter word!`);
+        return;
+    }
+
+    gameState.guesses.push(gameState.currentGuess);
+    updateKeyStates();
+
+    if (gameState.currentGuess === gameState.currentWord.word) {
+        // Won!
+        calculateScore();
+        endGame(true);
+    } else if (gameState.guesses.length === gameData[gameState.difficulty].maxAttempts) {
+        // Lost
+        gameState.streak = 0;
+        endGame(false);
+    } else {
+        gameState.currentGuess = '';
+        renderGameBoard();
+    }
+}
+
+function updateKeyStates() {
+    const guess = gameState.currentGuess;
+    const word = gameState.currentWord.word;
+
+    for (let i = 0; i < guess.length; i++) {
+        const letter = guess[i];
+        
+        if (word[i] === letter) {
+            gameState.keyStates[letter] = 'correct';
+        } else if (word.includes(letter) && gameState.keyStates[letter] !== 'correct') {
+            gameState.keyStates[letter] = 'present';
+        } else if (!gameState.keyStates[letter]) {
+            gameState.keyStates[letter] = 'absent';
+        }
+    }
+    
+    updateKeyboardDisplay();
+}
+
+function updateKeyboardDisplay() {
+    document.querySelectorAll('.key').forEach(button => {
+        const letter = button.textContent;
+        if (gameState.keyStates[letter]) {
+            button.classList.remove('correct', 'present', 'absent');
+            button.classList.add(gameState.keyStates[letter]);
+        }
+    });
+}
+
+function calculateScore() {
+    const baseScore = 100;
+    const penaltyPerGuess = 10;
+    const guessCount = gameState.guesses.length;
+    const wordLengthBonus = gameState.currentWord.word.length * 5;
+    
+    const score = Math.max(0, baseScore - (guessCount * penaltyPerGuess) + wordLengthBonus);
+    gameState.score += score;
+    gameState.streak += 1;
+    gameState.wins += 1;
+    
+    return score;
+}
+
+function endGame(won) {
+    gameState.gameOver = true;
+    gameState.won = won;
+    
+    const modal = document.getElementById('gameOverModal');
+    const title = document.getElementById('gameOverTitle');
+    const message = document.getElementById('gameOverMessage');
+    const finalScore = document.getElementById('finalScore');
+
+    if (won) {
+        title.textContent = '🎉 You Won!';
+        message.textContent = `Congratulations! You guessed the word: ${gameState.currentWord.word}`;
+        finalScore.textContent = gameState.score;
+    } else {
+        title.textContent = '😢 Game Over';
+        message.textContent = `The word was: ${gameState.currentWord.word}. Better luck next time!`;
+        gameState.streak = 0;
+        finalScore.textContent = gameState.score;
+    }
+
+    saveStats();
+    renderGameBoard();
+    modal.style.display = 'flex';
+}
+
+/* ==================== HINT SYSTEM ==================== */
+function showHint() {
+    if (gameState.hintUsed || gameState.gameOver) return;
+
+    gameState.hintUsed = true;
+    document.getElementById('hintBtn').disabled = true;
+
+    const word = gameState.currentWord.word;
+    const hintIndex = Math.floor(Math.random() * word.length);
+    const hintLetter = word[hintIndex];
+    
+    const hintText = `Hint: There is a '${hintLetter}' in position ${hintIndex + 1}`;
+    document.getElementById('hintText').textContent = hintText;
+    document.getElementById('hintDisplay').style.display = 'block';
+}
+
+/* ==================== STATISTICS ==================== */
+function saveStats() {
+    const stats = {
+        score: gameState.score,
+        streak: gameState.streak,
+        wins: gameState.wins
+    };
+    localStorage.setItem('wordleStats', JSON.stringify(stats));
+}
+
+function loadStats() {
+    const saved = localStorage.getItem('wordleStats');
+    if (saved) {
+        const stats = JSON.parse(saved);
+        gameState.score = stats.score;
+        gameState.streak = stats.streak;
+        gameState.wins = stats.wins;
+    }
+    updateDisplay();
+}
+
+/* ==================== KEYBOARD SUPPORT ==================== */
+function addKeyboardSupport() {
+    document.addEventListener('keydown', (event) => {
+        if (gameState.gameOver) return;
+
+        const letter = event.key.toUpperCase();
+        
+        if (/^[A-Z]$/.test(letter)) {
+            guessLetter(letter);
+        } else if (event.key === 'Backspace') {
+            deleteLetter();
+        } else if (event.key === 'Enter') {
+            submitGuess();
+        }
+    });
+}
+    </script>
+</body>
+</html>
